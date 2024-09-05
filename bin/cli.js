@@ -10,8 +10,15 @@ import chalk from "chalk";
 import qrcode from "qrcode";
 import boxen from "boxen";
 import process from "process";
-import { warn } from "console";
+import { readFileSync } from "fs";
+import { join } from "path";
 
+function getPackageVersion() {
+  const __dirname = new URL('..', import.meta.url).pathname;
+  return JSON
+    .parse(readFileSync(join(__dirname, "package.json"), "utf-8"))
+    .version;
+}
 const useragent =
   "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/112.0.0.0 Safari/537.36";
 
@@ -86,12 +93,21 @@ const startLocaltunnel = async (port) => {
 };
 
 program
-  .version("0.0.0")
-  .description("A CLI tool for reverse proxy and localtunnel/ngrok Tunnels")
+  .version(getPackageVersion())
+  .description("A CLI tool for reverse proxy and localtunnel Tunnels")
   .option("-p, --port <number>", "Port to run the reverse proxy on")
   .option("-t, --target <number>", "Target port of the localhost server")
   .option("-l, --localtunnel", "Start a Localtunnel tunnel")
   .action(async (options) => {
+    const logo = `
+  _                    _   _           _   
+ | |    __ _ _____   _| | | | ___  ___| |_ 
+ | |   / _  |_  / | | | |_| |/ _ \/ __| __|
+ | |__| (_| |/ /| |_| |  _  | (_) \__ \ |_ 
+ |_____\__,_/___|\__, |_| |_|\___/|___/\__|
+                 |___/                     
+`;
+    console.log(chalk.green(logo));
     let useLocaltunnel, port, targetPort;
     if (!options.port || !options.target) {
       const answers = await inquirer.prompt([

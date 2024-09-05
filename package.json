@@ -1,6 +1,6 @@
 {
   "name": "lazyhost",
-  "version": "0.0.2",
+  "version": "0.0.4",
   "main": "bin/cli.js",
   "bin": {
     "lazyhost": "./bin/cli.js"
@@ -9,8 +9,8 @@
     "start": "node cli.js"
   },
   "type": "module",
-  "keywords": [],
-  "author": "",
+  "keywords": ["reverse proxy", "localtunnel", "cli", "tool"],
+  "author": "bernoussama <oussama.bernou@outlook.com>",
   "license": "MIT",
   "description": "",
   "dependencies": {
