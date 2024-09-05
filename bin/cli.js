@@ -1,6 +1,6 @@
 #!/usr/bin/env node
 
-import inquirer from "inquirer";
+import { input, confirm } from "@inquirer/prompts";
 import { program } from "commander";
 import express from "express";
 import { createProxyMiddleware } from "http-proxy-middleware";
@@ -14,9 +14,8 @@ import { readFileSync } from "fs";
 import { join } from "path";
 
 function getPackageVersion() {
-  const __dirname = new URL('..', import.meta.url).pathname;
-  return JSON
-    .parse(readFileSync(join(__dirname, "package.json"), "utf-8"))
+  const __dirname = new URL("..", import.meta.url).pathname;
+  return JSON.parse(readFileSync(join(__dirname, "package.json"), "utf-8"))
     .version;
 }
 const useragent =
@@ -110,34 +109,26 @@ program
     console.log(chalk.green(logo));
     let useLocaltunnel, port, targetPort;
     if (!options.port || !options.target) {
-      const answers = await inquirer.prompt([
-        {
-          type: "input",
-          name: "port",
-          message: "Enter the port to run the reverse proxy on:",
-          default: "8080",
-          validate: (input) =>
-            !isNaN(parseInt(input)) || "Please enter a valid number",
-        },
-        {
-          type: "input",
-          name: "targetPort",
-          message: "Enter the target port of the localhost server:",
-          default: "3000",
-          validate: (input) =>
-            !isNaN(parseInt(input)) || "Please enter a valid number",
-        },
-        {
-          type: "confirm",
-          name: "localtunnel",
-          message:
-            "Do you want to use localtunnel(accessible outside your network)?",
-          default: false,
-        },
-      ]);
-      port = parseInt(answers.port);
-      targetPort = parseInt(answers.targetPort);
-      useLocaltunnel = answers.localtunnel;
+      port = await input({
+        name: "port",
+        message: "Enter the port to run the reverse proxy on:",
+        default: "8080",
+        validate: (input) =>
+          !isNaN(parseInt(input)) || "Please enter a valid number",
+      });
+      targetPort = await input({
+        name: "targetPort",
+        message: "Enter the target port of the localhost server:",
+        default: "3000",
+        validate: (input) =>
+          !isNaN(parseInt(input)) || "Please enter a valid number",
+      });
+      useLocaltunnel = await confirm({
+        name: "localtunnel",
+        message:
+          "Do you want to use localtunnel(accessible outside your network)?",
+        default: false,
+      });
     } else {
       port = parseInt(options.port);
       targetPort = parseInt(options.target);
